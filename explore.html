@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Explore Turfs{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    .explore-container {
+        padding: 2rem 0;
+        min-height: 100vh;
+    }
+
+    .turf-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        border: 1px solid rgba(40, 167, 69, 0.3);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .turf-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .turf-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+    }
+
+    .turf-name {
+        color: var(--primary-dark);
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .turf-info {
+        color: var(--primary-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .turf-facilities {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .facility-tag {
+        background: rgba(40, 167, 69, 0.1);
+        color: var(--primary-dark);
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.9rem;
+    }
+
+    .book-btn {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .book-btn:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    .no-turfs {
+        text-align: center;
+        padding: 3rem;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        margin: 2rem 0;
+    }
+
+    .no-turfs h2 {
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+    }
+
+    .no-turfs p {
+        color: #666;
+        margin-bottom: 1.5rem;
+    }
+
+    .add-turf-btn {
+        background: var(--primary-color);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+
+    .add-turf-btn:hover {
+        background: var(--primary-dark);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .reviews-section {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(40, 167, 69, 0.2);
+    }
+
+    .review-item {
+        background: rgba(255, 255, 255, 0.5);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+
+    .rating {
+        color: #ffc107;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="explore-container">
+    <div class="container">
+        {% if turfs %}
+            <div class="row">
+                {% for turf in turfs %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="turf-card">
+                            {% if turf.image %}
+                                <div class="turf-image" style="background-image: url('{{ url_for('static', filename='turf_images/' + turf.image) }}')"></div>
+                            {% else %}
+                                <div class="turf-image bg-secondary">
+                                    No Image Available
+                                </div>
+                            {% endif %}
+
+                            <h3 class="turf-name">{{ turf.name }}</h3>
+                            
+                            <p class="turf-info"><strong>Location:</strong> {{ turf.location or 'Not specified' }}</p>
+                            <p class="turf-info"><strong>Price:</strong> ₹{{ turf.price }}/hr</p>
+                            <p class="turf-info"><strong>Available Slots:</strong> {{ turf.slots }}</p>
+
+                            {% if turf.description %}
+                                <p class="turf-info">{{ turf.description }}</p>
+                            {% endif %}
+
+                            {% if turf.facilities %}
+                                <div class="turf-facilities">
+                                    {% for facility in turf.facilities %}
+                                        <span class="facility-tag">{{ facility }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <div class="turf-actions">
+                            <a href="{{ url_for('book', turf_id=turf.id) }}" class="book-btn">Book Now</a>
+                                <a href="{{ url_for('turf_reviews', turf_id=turf.id) }}" class="btn btn-outline-primary ms-2">Reviews</a>
+                            </div>
+
+                            {% set turf_reviews = reviews|selectattr('turf_id', 'equalto', turf.id)|list %}
+                            {% if turf_reviews %}
+                                <div class="reviews-section">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h4>Reviews</h4>
+                                        <div class="rating-summary">
+                                            {% set avg_rating = (turf_reviews|sum(attribute='rating') / turf_reviews|length)|round(1) %}
+                                            <span class="rating">{{ avg_rating }} ⭐</span>
+                                            <small class="text-muted">({{ turf_reviews|length }} reviews)</small>
+                                        </div>
+                                    </div>
+                                    {% for review in turf_reviews[:2] %}
+                                            <div class="review-item">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <strong>{{ review.name }}</strong>
+                                                    {% if review.verified_booking %}
+                                                        <span class="badge bg-success">Verified Booking</span>
+                                                    {% endif %}
+                                                </div>
+                                                <small class="text-muted">{{ review.date }}</small>
+                                            </div>
+                                            <div class="rating">
+                                                {% for _ in range(review.rating) %}⭐{% endfor %}
+                                            </div>
+                                            <p>{{ review.comment }}</p>
+                                        </div>
+                                    {% endfor %}
+                                    {% if turf_reviews|length > 2 %}
+                                        <a href="{{ url_for('turf_reviews', turf_id=turf.id) }}" class="btn btn-link">View all {{ turf_reviews|length }} reviews</a>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <div class="reviews-section">
+                                    <p class="text-muted">No reviews yet. <a href="{{ url_for('turf_reviews', turf_id=turf.id) }}">Be the first to review!</a></p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-turfs">
+                <h2>No Turfs Available</h2>
+                <p>There are currently no turfs listed. Please check back later or contact an administrator to add turfs.</p>
+                {% if 'admin' in session %}
+                    <a href="{{ url_for('admin_dashboard') }}" class="add-turf-btn">Add New Turf</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
