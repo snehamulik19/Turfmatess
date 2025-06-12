@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Turf Booking System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Book your favorite turf for sports and activities">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <style>
+        .logo-container {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem;
+            border-radius: 10px;
+        }
+
+        .logo {
+            height: 60px;
+            width: auto;
+        }
+
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 4rem 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                        url('{{ url_for('static', filename='images/soccer-ball-bg.jpg') }}') center/cover;
+            background-attachment: fixed;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
+            z-index: 1;
+        }
+
+        .hero-content {
+            text-align: center;
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            text-shadow: none;
+            color: #000;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .cta-btn {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-explore {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-explore:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-admin {
+            background: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-admin:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .features-section {
+            padding: 4rem 0;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+
+        .feature-description {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .auth-options {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .auth-section {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .auth-divider {
+            color: rgba(255, 255, 255, 0.5);
+            margin: 0 0.5rem;
+        }
+
+        .btn-auth {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-register {
+            background: transparent;
+            color: white;
+            border: 1px solid white;
+        }
+
+        .btn-login:hover, .btn-register:hover {
+            transform: translateY(-2px);
+            color: white;
+            opacity: 0.9;
+        }
+
+        .user-welcome {
+            color: white;
+            margin-right: 1rem;
+        }
+
+        .btn-logout {
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            border: none;
+        }
+
+        .btn-logout:hover {
+            background: rgb(220, 53, 69);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo -->
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='logo/logo.png') }}" alt="Turf Mates Logo" class="logo">
+    </div>
+
+    <!-- Auth Options -->
+    <div class="auth-options">
+        {% if session.get('user_email') %}
+            <div class="auth-section">
+                <span class="user-welcome">Welcome, {{ session.get('user_name', 'User') }}!</span>
+                <a href="{{ url_for('user_logout') }}" class="btn-auth btn-logout">Logout</a>
+            </div>
+        {% else %}
+            <div class="auth-section">
+                <a href="{{ url_for('user_login') }}" class="btn-auth btn-login">Login</a>
+                <a href="{{ url_for('user_register') }}" class="btn-auth btn-register">Register</a>
+                <span class="auth-divider">|</span>
+                <a href="{{ url_for('admin_login') }}" class="btn-auth btn-login">Admin Login</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Welcome to Turf Booking System</h1>
+                <p class="hero-subtitle">Book your favorite turf with just a few clicks</p>
+                <div class="cta-buttons">
+                    {% if session.get('user_email') %}
+                        <a href="{{ url_for('explore') }}" class="cta-btn btn-explore">Explore Turfs</a>
+                    {% else %}
+                        <a href="{{ url_for('user_login') }}" class="cta-btn btn-explore">Login to Book</a>
+                        <a href="{{ url_for('user_register') }}" class="cta-btn btn-admin">New User? Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3 class="feature-title">Easy Booking</h3>
+                        <p class="feature-description">Book your preferred turf slot in just a few simple steps. Quick and hassle-free process.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">💳</div>
+                        <h3 class="feature-title">Secure Payments</h3>
+                        <p class="feature-description">Multiple payment options available. Pay securely through QR code or cash.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3 class="feature-title">Instant Confirmation</h3>
+                        <p class="feature-description">Get immediate booking confirmation and details right on your screen.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
