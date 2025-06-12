@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Booking Confirmation{% endblock %}
+
+{% block extra_css %}
+<style>
+    .confirmation-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+    }
+
+    .confirmation-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        border: 1px solid rgba(40, 167, 69, 0.3);
+        padding: 2rem;
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+    }
+
+    .confirmation-card::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, #28a745, #ffffff);
+        border-radius: 17px;
+        z-index: -1;
+    }
+
+    .confirmation-title {
+        color: #1e4620;
+        font-weight: bold;
+        margin-bottom: 2rem;
+    }
+
+    .confirmation-details {
+        color: #28a745;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .back-link {
+        color: #28a745;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        transition: color 0.2s;
+        font-weight: 500;
+    }
+
+    .back-link:hover {
+        color: #218838;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="confirmation-container">
+    <div class="confirmation-card">
+        <h2 class="confirmation-title">Booking Confirmed!</h2>
+        <div class="confirmation-details">
+            <p>Thank you for booking with us!</p>
+            <p>Your booking details have been sent to your phone number.</p>
+        </div>
+        <a href="{{ url_for('explore') }}" class="back-link">← Back to Explore</a>
+    </div>
+</div>
+{% endblock %}
